@@ -45,7 +45,11 @@
           :INPUT "defabc"
           :NUM-SUBMATCHES 2
           :NAMED-SUBMATCHES (("X" 2) ("Z" 1)))))
-  )
+  (*= (re-let "\\d{2}:\\d{2}"
+              "33:34"
+              ((a 0) (b 888))
+        (list a b))
+      (list "33:34" NIL)))
 
 
 (test multiple-lines 

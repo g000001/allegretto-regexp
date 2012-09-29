@@ -146,16 +146,17 @@
 (defmethod re-submatch ((regexp regular-expression-match) string indexes selector
                         &key (type :string))
   (declare (ignore type string indexes))
-  (destructuring-bind (s . e)
-                      (if (integerp selector)
-                          (nth selector (regular-expression-match-indexes regexp))
-                          (nth (second 
-                                (assoc selector
+  (let ((selector (the integer
+                    (if (integerp selector)
+                        selector
+                        (second (assoc selector
                                        (regular-expression-match-named-submatches regexp)
-                                       :test #'string=))
-                               (regular-expression-match-indexes regexp)))
-    (subseq (regular-expression-match-input regexp) 
-            s e)))
+                                       :test #'string=))))))
+    (and (<= selector (regular-expression-match-num-submatches regexp))
+         (destructuring-bind (&optional s &rest e)
+                             (nth selector (regular-expression-match-indexes regexp))
+           (subseq (regular-expression-match-input regexp) 
+                   s e)))))
 
 
 (defmacro re-lambda (regex var-list &body body)
